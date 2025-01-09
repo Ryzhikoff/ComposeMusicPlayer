@@ -1,6 +1,7 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import kotlin.io.path.div
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -102,7 +103,8 @@ compose.desktop {
             packageName = "info.test"
             packageVersion = "1.0.0"
 
-            fromFiles("src/desktopMain/resources/vlc/libvlc.dll", "src/desktopMain/resources/vlc/libvlccore.dll")
+            appResourcesRootDir = (rootDir.toPath() / "vlc").toFile()
+//            fromFiles("src/desktopMain/resources/vlc/libvlc.dll", "src/desktopMain/resources/vlc/libvlccore.dll")
         }
     }
 }
