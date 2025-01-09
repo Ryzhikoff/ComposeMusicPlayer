@@ -36,6 +36,10 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+
+            implementation (libs.androidx.media3.exoplayer)
+            implementation (libs.androidx.media3.exoplayer.dash)
+            implementation (libs.androidx.media3.ui)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -46,10 +50,14 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
+
+//            implementation(libs.compose.multiplatform.media.player)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
+            implementation(libs.vlcj)
+            implementation(libs.jna)
         }
     }
 }
@@ -93,6 +101,17 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Exe)
             packageName = "info.test"
             packageVersion = "1.0.0"
+
+            fromFiles("src/desktopMain/resources/vlc/libvlc.dll", "src/desktopMain/resources/vlc/libvlccore.dll")
         }
     }
 }
+
+//tasks.register<Copy>("copyVlcLibs") {
+//    from("src/desktopMain/resources/vlc")
+//    into("$buildDir/libs/vlc")
+//}
+//
+//tasks.named<JavaExec>("runJvm") {
+//    dependsOn("copyVlcLibs")
+//}
