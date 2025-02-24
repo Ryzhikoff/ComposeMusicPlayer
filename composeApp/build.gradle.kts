@@ -98,13 +98,42 @@ compose.desktop {
     application {
         mainClass = "info.test.MainKt"
 
+        buildTypes.release.proguard {
+            obfuscate.set(true)
+        }
+
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Exe)
-            packageName = "info.test"
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            packageName = "Music Player"
             packageVersion = "1.0.0"
 
-            appResourcesRootDir = (rootDir.toPath() / "vlc").toFile()
+//            appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
+
+//            appResourcesRootDir = (rootDir.toPath() / "vlc").toFile()
+            appResourcesRootDir.set((rootDir.toPath() / "resources").toFile())
 //            fromFiles("src/desktopMain/resources/vlc/libvlc.dll", "src/desktopMain/resources/vlc/libvlccore.dll")
+
+//            windows {
+//                when (val arch = System.getProperty("os.arch")) {
+//                    "amd64" -> {
+//                        appResourcesRootDir.set(projectDir.resolve("vlc/windows/x64"))
+//                    }
+//                    "x86" -> {
+//                        appResourcesRootDir.set(projectDir.resolve("vlc/windows/x86"))
+//                    }
+//                    else -> {
+//                        throw IllegalStateException("Unsupported Windows architecture: $arch")
+//                    }
+//                }
+//            }
+//
+//            linux {
+//                appResourcesRootDir.set(projectDir.resolve("vlc/linux/x64"))
+//            }
+//
+//            macOS {
+//                appResourcesRootDir.set(projectDir.resolve("vlc/macos/x64"))
+//            }
         }
     }
 }
@@ -117,3 +146,24 @@ compose.desktop {
 //tasks.named<JavaExec>("runJvm") {
 //    dependsOn("copyVlcLibs")
 //}
+
+tasks.withType<JavaExec> {
+    systemProperty("file.encoding", "UTF-8")
+}
+
+tasks.withType<Jar> {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    from("src/desktopMain/resources/vlc/") {
+        into("vlc/")
+    }
+}
+
+tasks.withType<JavaExec> {
+    doFirst {
+        copy {
+            from("src/desktopMain/resources/vlc")
+            into("${buildDir}/vlc")
+        }
+    }
+    systemProperty("jna.library.path", "${buildDir}/vlc")
+}
